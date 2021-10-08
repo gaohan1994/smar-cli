@@ -1,0 +1,208 @@
+/**
+* 作品：mixin.less
+* 更新：2017年12月14日
+* 简介：1. 一个基于 Less 的样式工具库，封装了常用 mixin，帮助您更轻松地书写 Less 代码。
+*       2. 只在调用时才输出代码，减少代码冗余，避免样式污染
+*       3. 不自带兼容前缀，减少代码量，而建议采用工具生成，如 postcss、Autoprefixer、less-plugin-autoprefix 等
+*/
+
+.size(@weight, @height) {
+  width : @weight;
+  height: @height;
+}
+
+// 块级元素水平居中
+.center(auto-x) {
+  display     : block;
+  margin-left : auto;
+  margin-right: auto;
+}
+
+.center(unknown) {
+  position: absolute;
+  top     : 0;
+  right   : 0;
+  bottom  : 0;
+  left    : 0;
+  margin  : auto;
+}
+
+.center(unknown-x) {
+  position    : absolute;
+  left        : 0;
+  right       : 0;
+  margin-left : auto;
+  margin-right: auto;
+}
+
+.center(unknown-y) {
+  position     : absolute;
+  top          : 0;
+  bottom       : 0;
+  margin-top   : auto;
+  margin-bottom: auto;
+}
+
+// 居中, 确定尺寸, 兼容 IE6
+.center(known, @w, @h) {
+  .size(@w, @h);
+  position   : absolute;
+  top        : 50%;
+  left       : 50%;
+  margin-top : -(@w / 2);
+  margin-left: -(@h / 2);
+}
+
+.center(known-x, @w) {
+  width      : @w;
+  position   : absolute;
+  left       : 50%;
+  margin-left: -(@h / 2);
+}
+
+.center(known-y, @h) {
+  height    : @h;
+  position  : absolute;
+  top       : 50%;
+  margin-top: -(@w / 2);
+}
+
+// css3 兼容待定
+.center(translate) {
+  position : absolute;
+  top      : 50%;
+  left     : 50%;
+  transform: translate(-50%, -50%);
+}
+
+// 居中, Flex 方式, 兼容性不行
+.center(flex) {
+  display        : flex;
+  align-items    : center;
+  justify-content: center;
+}
+
+// 容器宽高比固定
+// 100* 1/1 = 100%
+// 100* 3/4 = 75%
+.fixed-ratio(@padding-top: 100%) {
+  position   : relative;
+  width      : 100%;
+  height     : 0;
+  padding-top: @padding-top;
+
+  img {
+    position: absolute;
+    top     : 0;
+    left    : 0;
+    width   : 100%;
+    height  : 100%;
+  }
+}
+
+/**
+* ------ 文字 ------
+*/
+
+// 禁止换行, 文本溢出省略号显示 (一行)
+.ellipsis() {
+  white-space      : normal;
+  word-wrap        : break-word;
+  word-break       : break-all;
+  -o-text-overflow : ellipsis;
+  -ms-text-overflow: ellipsis;
+  text-overflow    : ellipsis;
+  overflow         : hidden;
+}
+
+// 文本溢出省略号显示 (多行)
+// 只支持 webkit 浏览器, 解决方案：高度 = 行高*行数
+// height: 90px; line-height: 30px; -webkit-line-clamp: 3;
+.ellipsis-mult(@n: 3) {
+  display           : -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: @n;
+  word-break        : break-all;
+  -o-text-overflow  : ellipsis;
+  -ms-text-overflow : ellipsis;
+  text-overflow     : ellipsis;
+  overflow          : hidden;
+}
+
+
+/**
+* ------ 图像 ------
+*/
+
+// 2x 3x 背景图片
+.bg-image(@url) {
+  background-image: url("@url + '@2x.png'");
+
+  @media (-webkit-min-device-pixel-ratio: 3),
+  (min-device-pixel-ratio: 3) {
+    background-image: url("@url + '@3x.png'");
+  }
+}
+
+// 全屏大图背景
+.fullscreen-bg(@url) {
+  width          : 100vw;
+  height         : 100vh;
+  background     : url(@url) no-repeat 50% 50%;
+  background-size: cover;
+}
+
+
+/**
+* ------ 浮动 ------
+*/
+// 浮动, 兼容 IE6
+
+// 清除浮动
+.clearfix() {
+  zoom: 1;
+
+  &:after {
+    display   : block;
+    clear     : both;
+    content   : '';
+    visibility: hidden;
+    height    : 0;
+  }
+}
+
+
+// 1 像素边框问题
+.onepx(...) {
+  position: relative;
+
+  &:after {
+    content   : '';
+    display   : block;
+    position  : absolute;
+    left      : 0;
+    width     : 100%;
+    border-top: 1px solid rgba(7, 17, 27, 0.1);
+    transform : scaleY(0.5);
+  }
+}
+
+.onepx(top) {
+  &:after {
+    top: 0;
+  }
+}
+
+.onepx(bottom) {
+  &:after {
+    bottom: 0;
+  }
+}
+
+.onepx-easy(top, @color: #ccc) {
+  box-shadow: inset 0px -1px 1px -1px @color;
+}
+
+.onepx-easy(bottom, @color: #ccc) {
+  box-shadow: inset 0px 1px 1px -1px @color;
+}
